@@ -1,0 +1,116 @@
+advice|My mom gave me some good advice.
+age|What age are you now?
+ahead|The finish line is just ahead.
+alone|The cat sat alone on the step.
+and|I like apples and grapes.
+badge|She wore a shiny badge.
+belt|Dad put on his brown belt.
+beside|Sit beside me on the bus.
+bridge|We walked across the bridge.
+bring|Please bring your book to school.
+change|I need to change my shoes.
+checked|Mom checked my homework.
+chin|I bumped my chin on the slide.
+cliff|The goat stood on top of the cliff.
+clock|The clock says it is time for bed.
+close|Please close the door.
+closed|The shop is closed today.
+cub|The bear cub played in the grass.
+cube|I put an ice cube in my drink.
+dodge|Can you dodge the ball?
+does|Does your dog like to play fetch?
+drink|I drink milk at lunch.
+dug|The dog dug a hole in the yard.
+edge|Do not stand on the edge of the bed.
+everyone|Everyone sang happy birthday.
+excuse|Excuse me, may I go first?
+excused|I was excused from the table after dinner.
+face|She has a big smile on her face.
+flake|A flake of snow landed on my nose.
+flu|He stayed home with the flu.
+fox|The red fox ran into the woods.
+fudge|Grandma made chocolate fudge.
+grade|I am in second grade.
+grass|The grass is wet in the morning.
+grin|He had a big grin on his face.
+he|He likes to ride his bike.
+heard|I heard a bird sing.
+help|Can you help me tie my shoe?
+hi|Hi, how are you today?
+hope|I hope it snows tomorrow.
+hoped|We hoped the rain would stop.
+huge|The elephant is huge.
+include|Please include your sister in the game.
+invited|She invited me to her party.
+jam|I like jam on my toast.
+kit|My dad has a tool kit.
+landed|The plane landed safely.
+met|I met a new friend at the park.
+mice|Three little mice ran under the bed.
+minus|Five minus two is three.
+mistake|It is okay to make a mistake.
+much|Thank you very much.
+music|We danced to the music.
+neck|The giraffe has a long neck.
+nest|The bird sat in its nest.
+nice|It is nice to share.
+nod|Nod your head if you agree.
+nose|The clown has a red nose.
+page|Turn to the next page.
+place|This is my favorite place to read.
+plants|We water the plants every day.
+plot|We grew carrots in our garden plot.
+price|What is the price of this toy?
+quiet|Please be quiet in the library.
+quite|The water is quite cold.
+raced|The kids raced to the swings.
+ready|Are you ready to go?
+robot|The robot can wave its arm.
+rub|Rub your hands to make them warm.
+saved|I saved my money in a piggy bank.
+see|I can see the moon.
+shade|Let's sit in the shade of the tree.
+she|She has a pet bunny.
+shelf|Put the book back on the shelf.
+shin|I hurt my shin when I fell.
+shine|The stars shine at night.
+shop|We went to the toy shop.
+skin|A banana has yellow skin.
+smell|I love the smell of cookies.
+smiled|The baby smiled at me.
+snack|I had an apple for a snack.
+so|I am so happy today.
+sock|I lost my sock.
+space|Astronauts fly into space.
+spend|I want to spend the day at the beach.
+stiff|My legs feel stiff after the long ride.
+that|Can I have that red ball?
+the|The sun is hot.
+their|The kids put on their coats.
+thanked|I thanked my aunt for the gift.
+thanking|We are thanking our teacher with a card.
+thick|This book is very thick.
+thin|The paper is very thin.
+thing|What is that thing in the box?
+thinking|I am thinking about lunch.
+trade|Do you want to trade stickers?
+traded|We traded snacks at lunch.
+trunks|The elephants lifted their trunks.
+use|You can use my crayons.
+vet|We took our dog to the vet.
+wag|My puppy likes to wag his tail.
+wash|Wash your hands before you eat.
+water|Fish swim in the water.
+what|What is your name?
+when|When is your birthday?
+where|Where is my hat?
+while|Wait here while I get my coat.
+wished|She wished on a star.
+who|Who wants to play tag?
+word|Can you spell this word?
+wrap|Let's wrap the present.
+write|I can write my name.
+yet|Is it time to go yet?
+you|I love you.
+young|The puppy is very young.
+zip|Zip up your coat, it is cold.

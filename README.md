@@ -13,8 +13,13 @@ It's a single static `index.html` with no build step.
 
 ## Voice
 
-The words are pre-recorded MP3s in `audio/`, made with the open-source
-[Kokoro](https://github.com/hexgrad/kokoro) text-to-speech model (voice `af_bella`)
-run locally through [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
-`tools/generate-audio.sh` is the script that made them. If a clip can't load,
-the game falls back to the device's built-in voice.
+The words and sentences are pre-recorded MP3s in `audio/`, made with the open-source
+[Kokoro v1.0](https://github.com/hexgrad/kokoro) text-to-speech model (American voice
+`af_heart`, US English pronunciation, slowed down for young readers), run locally through
+[sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
+
+- `tools/sentences.txt` – the example sentence for each word (used in Spell It)
+- `tools/audio-items.tsv` – every clip: key, text, speed
+- `tools/generate-audio.sh` – the script that recorded them
+
+If a clip can't load, the game falls back to the device's built-in voice.

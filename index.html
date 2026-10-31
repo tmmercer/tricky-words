@@ -186,6 +186,7 @@ h1 span{color:var(--grape)}
 
 <script>
 const WORDS = ["advice","age","ahead","alone","and","badge","belt","beside","bridge","bring","change","checked","chin","cliff","clock","close","closed","cub","cube","dodge","does","drink","dug","edge","everyone","excuse","excused","face","flake","flu","fox","fudge","grade","grass","grin","he","heard","help","hi","hope","hoped","huge","include","invited","jam","kit","landed","met","mice","minus","mistake","much","music","neck","nest","nice","nod","nose","page","place","plants","plot","price","quiet","quite","raced","ready","robot","rub","saved","see","shade","she","shelf","shin","shine","shop","skin","smell","smiled","snack","so","sock","space","spend","stiff","that","the","their","thanked","thanking","thick","thin","thing","thinking","trade","traded","trunks","use","vet","wag","wash","water","what","when","where","while","wished","who","word","wrap","write","yet","you","young","zip"];
+const SENTENCES = {"advice": "My mom gave me some good advice.", "age": "What age are you now?", "ahead": "The finish line is just ahead.", "alone": "The cat sat alone on the step.", "and": "I like apples and grapes.", "badge": "She wore a shiny badge.", "belt": "Dad put on his brown belt.", "beside": "Sit beside me on the bus.", "bridge": "We walked across the bridge.", "bring": "Please bring your book to school.", "change": "I need to change my shoes.", "checked": "Mom checked my homework.", "chin": "I bumped my chin on the slide.", "cliff": "The goat stood on top of the cliff.", "clock": "The clock says it is time for bed.", "close": "Please close the door.", "closed": "The shop is closed today.", "cub": "The bear cub played in the grass.", "cube": "I put an ice cube in my drink.", "dodge": "Can you dodge the ball?", "does": "Does your dog like to play fetch?", "drink": "I drink milk at lunch.", "dug": "The dog dug a hole in the yard.", "edge": "Do not stand on the edge of the bed.", "everyone": "Everyone sang happy birthday.", "excuse": "Excuse me, may I go first?", "excused": "I was excused from the table after dinner.", "face": "She has a big smile on her face.", "flake": "A flake of snow landed on my nose.", "flu": "He stayed home with the flu.", "fox": "The red fox ran into the woods.", "fudge": "Grandma made chocolate fudge.", "grade": "I am in second grade.", "grass": "The grass is wet in the morning.", "grin": "He had a big grin on his face.", "he": "He likes to ride his bike.", "heard": "I heard a bird sing.", "help": "Can you help me tie my shoe?", "hi": "Hi, how are you today?", "hope": "I hope it snows tomorrow.", "hoped": "We hoped the rain would stop.", "huge": "The elephant is huge.", "include": "Please include your sister in the game.", "invited": "She invited me to her party.", "jam": "I like jam on my toast.", "kit": "My dad has a tool kit.", "landed": "The plane landed safely.", "met": "I met a new friend at the park.", "mice": "Three little mice ran under the bed.", "minus": "Five minus two is three.", "mistake": "It is okay to make a mistake.", "much": "Thank you very much.", "music": "We danced to the music.", "neck": "The giraffe has a long neck.", "nest": "The bird sat in its nest.", "nice": "It is nice to share.", "nod": "Nod your head if you agree.", "nose": "The clown has a red nose.", "page": "Turn to the next page.", "place": "This is my favorite place to read.", "plants": "We water the plants every day.", "plot": "We grew carrots in our garden plot.", "price": "What is the price of this toy?", "quiet": "Please be quiet in the library.", "quite": "The water is quite cold.", "raced": "The kids raced to the swings.", "ready": "Are you ready to go?", "robot": "The robot can wave its arm.", "rub": "Rub your hands to make them warm.", "saved": "I saved my money in a piggy bank.", "see": "I can see the moon.", "shade": "Let's sit in the shade of the tree.", "she": "She has a pet bunny.", "shelf": "Put the book back on the shelf.", "shin": "I hurt my shin when I fell.", "shine": "The stars shine at night.", "shop": "We went to the toy shop.", "skin": "A banana has yellow skin.", "smell": "I love the smell of cookies.", "smiled": "The baby smiled at me.", "snack": "I had an apple for a snack.", "so": "I am so happy today.", "sock": "I lost my sock.", "space": "Astronauts fly into space.", "spend": "I want to spend the day at the beach.", "stiff": "My legs feel stiff after the long ride.", "that": "Can I have that red ball?", "the": "The sun is hot.", "their": "The kids put on their coats.", "thanked": "I thanked my aunt for the gift.", "thanking": "We are thanking our teacher with a card.", "thick": "This book is very thick.", "thin": "The paper is very thin.", "thing": "What is that thing in the box?", "thinking": "I am thinking about lunch.", "trade": "Do you want to trade stickers?", "traded": "We traded snacks at lunch.", "trunks": "The elephants lifted their trunks.", "use": "You can use my crayons.", "vet": "We took our dog to the vet.", "wag": "My puppy likes to wag his tail.", "wash": "Wash your hands before you eat.", "water": "Fish swim in the water.", "what": "What is your name?", "when": "When is your birthday?", "where": "Where is my hat?", "while": "Wait here while I get my coat.", "wished": "She wished on a star.", "who": "Who wants to play tag?", "word": "Can you spell this word?", "wrap": "Let's wrap the present.", "write": "I can write my name.", "yet": "Is it time to go yet?", "you": "I love you.", "young": "The puppy is very young.", "zip": "Zip up your coat, it is cold."};
 const ROUND = 10;
 const CHEERS = ["Great job!","Super!","You got it!","Awesome!","Wow!","Yes!","Brilliant!","Star reader!"];
 
@@ -218,7 +219,7 @@ let soundOk=false;
 // Browsers (especially Safari) only allow speech that starts during a tap, so everything
 // that should be heard after a tap is queued right then, never from a timer.
 let utterQueue=[]; // keep references so Chrome doesn't garbage-collect them mid-speech
-function say(texts,rate=0.8){
+function say(texts,rate=0.7){
   if(!synth) return false;
   const items=(Array.isArray(texts)?texts:[texts]).filter(t=>t&&String(t).trim());
   if(!items.length) return false;
@@ -283,7 +284,7 @@ function speak(keys){
   const id=++speakId;
   wakeAudio(); stopClips();
   try{ if(synth&&(synth.speaking||synth.pending)) synth.cancel() }catch(e){}
-  const textOf=k=>PROMPTS[k]||phrase(k);
+  const textOf=k=>PROMPTS[k]||(k.startsWith("s_")?(SENTENCES[k.slice(2)]||k.slice(2)):phrase(k));
   if(!keepAlive){ say(keys.map(textOf)); return }
   Promise.all(keys.map(loadClip)).then(bufs=>{
     if(id!==speakId) return;           // a newer tap took over
@@ -292,7 +293,7 @@ function speak(keys){
     bufs.forEach((b,i)=>{
       const src=keepAlive.createBufferSource(); src.buffer=b; src.connect(keepAlive.destination);
       src.start(t); playing.push(src);
-      t+=b.duration+(keys[i].startsWith("_")?0.05:0.25);
+      t+=b.duration+(keys[i].startsWith("s_")?0.5:keys[i].startsWith("_")?0.1:0.4);
     });
     soundOk=true; hideSoundTip();
   });
@@ -339,7 +340,7 @@ function pickWords(practice, filter){
 function start(mode, practice=false){
   const filter = null;
   G={mode,practice,words:pickWords(practice,filter),i:0,stars:0,firstTry:true,missed:new Set(),retry:[]};
-  show(mode); preload(["_nowfind","_nowspell","_thatsays","_find","_greatjob","_goodtry",...G.words]); render();
+  show(mode); preload(["_nowfind","_nowspell","_thatsays","_find","_greatjob","_goodtry",...G.words,...(mode==="spell"?G.words.map(w=>"s_"+w):[])]); render();
 }
 function sec(){return document.getElementById(G.mode)}
 function setTop(){
@@ -364,13 +365,15 @@ function render(quiet){
   if(G.mode==="flash") renderFlash();
   if(G.mode==="spell") renderSpell(quiet);
 }
+// Spelling-bee style: the word, the word in a sentence, then the word again.
+function spellPrompt(w){ return [w,"s_"+w,w] }
 function finishMsg(){ return G.stars>=G.words.length/2 ? "_greatjob" : "_goodtry" }
 // What to say after the current word is done (queued during the same tap).
 function upNext(){
   const nx=G.words[G.i+1];
   if(nx===undefined) return [finishMsg()];
   if(G.mode==="listen") return ["_nowfind",nx];
-  if(G.mode==="spell") return ["_nowspell",nx];
+  if(G.mode==="spell") return ["_nowspell",...spellPrompt(nx)];
   return [];
 }
 
@@ -437,7 +440,7 @@ function renderSpell(quiet){
     const t=document.createElement("button"); t.className="tile"; t.textContent=ch;
     t.onclick=()=>tapTile(t,ch); tiles.appendChild(t);
   });
-  if(!quiet) speak([w]);
+  if(!quiet) speak(spellPrompt(w));
 }
 function tapTile(t,ch){
   if(t.classList.contains("used")||!S) return;
@@ -451,7 +454,7 @@ function tapTile(t,ch){
     miss(S.w); t.classList.add("wrong"); setTimeout(()=>t.classList.remove("wrong"),450);
   }
 }
-$("#say3").onclick=()=>speak([current()]);
+$("#say3").onclick=()=>speak(spellPrompt(current()));
 $("#peekBtn").onclick=()=>{
   const w=current(); $("#peek").innerHTML='<span class="word" style="font-size:34px">'+w+'</span>';
   setTimeout(()=>{ if(current()===w) $("#peek").textContent="" },1800);

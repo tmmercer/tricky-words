@@ -1,0 +1,238 @@
+advice	advice.	1.5
+age	age.	1.5
+ahead	ahead.	1.5
+alone	alone.	1.5
+and	and.	1.5
+badge	badge.	1.5
+belt	belt.	1.5
+beside	beside.	1.5
+bridge	bridge.	1.5
+bring	bring.	1.5
+change	change.	1.5
+checked	checked.	1.5
+chin	chin.	1.5
+cliff	cliff.	1.5
+clock	clock.	1.5
+close	close. close the door.	1.5
+closed	closed.	1.5
+cub	cub.	1.5
+cube	cube.	1.5
+dodge	dodge.	1.5
+does	does.	1.5
+drink	drink.	1.5
+dug	dug.	1.5
+edge	edge.	1.5
+everyone	everyone.	1.5
+excuse	excuse.	1.5
+excused	excused.	1.5
+face	face.	1.5
+flake	flake.	1.5
+flu	flu.	1.5
+fox	fox.	1.5
+fudge	fudge.	1.5
+grade	grade.	1.5
+grass	grass.	1.5
+grin	grin.	1.5
+he	he.	1.5
+heard	heard.	1.5
+help	help.	1.5
+hi	hi.	1.5
+hope	hope.	1.5
+hoped	hoped.	1.5
+huge	huge.	1.5
+include	include.	1.5
+invited	invited.	1.5
+jam	jam.	1.5
+kit	kit.	1.5
+landed	landed.	1.5
+met	met.	1.5
+mice	mice.	1.5
+minus	minus.	1.5
+mistake	mistake.	1.5
+much	much.	1.5
+music	music.	1.5
+neck	neck.	1.5
+nest	nest.	1.5
+nice	nice.	1.5
+nod	nod.	1.5
+nose	nose.	1.5
+page	page.	1.5
+place	place.	1.5
+plants	plants.	1.5
+plot	plot.	1.5
+price	price.	1.5
+quiet	quiet.	1.5
+quite	quite.	1.5
+raced	raced.	1.5
+ready	ready.	1.5
+robot	robot.	1.5
+rub	rub.	1.5
+saved	saved.	1.5
+see	see.	1.5
+shade	shade.	1.5
+she	she.	1.5
+shelf	shelf.	1.5
+shin	shin.	1.5
+shine	shine.	1.5
+shop	shop.	1.5
+skin	skin.	1.5
+smell	smell.	1.5
+smiled	smiled.	1.5
+snack	snack.	1.5
+so	so.	1.5
+sock	sock.	1.5
+space	space.	1.5
+spend	spend.	1.5
+stiff	stiff.	1.5
+that	that.	1.5
+the	the.	1.5
+their	their. their house.	1.5
+thanked	thanked.	1.5
+thanking	thanking.	1.5
+thick	thick.	1.5
+thin	thin.	1.5
+thing	thing.	1.5
+thinking	thinking.	1.5
+trade	trade.	1.5
+traded	traded.	1.5
+trunks	trunks.	1.5
+use	use.	1.5
+vet	vet.	1.5
+wag	wag.	1.5
+wash	wash.	1.5
+water	water.	1.5
+what	what.	1.5
+when	when.	1.5
+where	where.	1.5
+while	while.	1.5
+wished	wished.	1.5
+who	who.	1.5
+word	word.	1.5
+wrap	wrap.	1.5
+write	write.	1.5
+yet	yet.	1.5
+you	you.	1.5
+young	young.	1.5
+zip	zip.	1.5
+_nowfind	Now find:	1.3
+_nowspell	Now spell:	1.3
+_thatsays	Oops! That says	1.3
+_find	Find:	1.3
+_greatjob	Great job! You did it!	1.3
+_goodtry	Good try! Let's play again!	1.3
+s_advice	My mom gave me some good advice.	1.45
+s_age	What age are you now?	1.45
+s_ahead	The finish line is just ahead.	1.45
+s_alone	The cat sat alone on the step.	1.45
+s_and	I like apples and grapes.	1.45
+s_badge	She wore a shiny badge.	1.45
+s_belt	Dad put on his brown belt.	1.45
+s_beside	Sit beside me on the bus.	1.45
+s_bridge	We walked across the bridge.	1.45
+s_bring	Please bring your book to school.	1.45
+s_change	I need to change my shoes.	1.45
+s_checked	Mom checked my homework.	1.45
+s_chin	I bumped my chin on the slide.	1.45
+s_cliff	The goat stood on top of the cliff.	1.45
+s_clock	The clock says it is time for bed.	1.45
+s_close	Please close the door.	1.45
+s_closed	The shop is closed today.	1.45
+s_cub	The bear cub played in the grass.	1.45
+s_cube	I put an ice cube in my drink.	1.45
+s_dodge	Can you dodge the ball?	1.45
+s_does	Does your dog like to play fetch?	1.45
+s_drink	I drink milk at lunch.	1.45
+s_dug	The dog dug a hole in the yard.	1.45
+s_edge	Do not stand on the edge of the bed.	1.45
+s_everyone	Everyone sang happy birthday.	1.45
+s_excuse	Excuse me, may I go first?	1.45
+s_excused	I was excused from the table after dinner.	1.45
+s_face	She has a big smile on her face.	1.45
+s_flake	A flake of snow landed on my nose.	1.45
+s_flu	He stayed home with the flu.	1.45
+s_fox	The red fox ran into the woods.	1.45
+s_fudge	Grandma made chocolate fudge.	1.45
+s_grade	I am in second grade.	1.45
+s_grass	The grass is wet in the morning.	1.45
+s_grin	He had a big grin on his face.	1.45
+s_he	He likes to ride his bike.	1.45
+s_heard	I heard a bird sing.	1.45
+s_help	Can you help me tie my shoe?	1.45
+s_hi	Hi, how are you today?	1.45
+s_hope	I hope it snows tomorrow.	1.45
+s_hoped	We hoped the rain would stop.	1.45
+s_huge	The elephant is huge.	1.45
+s_include	Please include your sister in the game.	1.45
+s_invited	She invited me to her party.	1.45
+s_jam	I like jam on my toast.	1.45
+s_kit	My dad has a tool kit.	1.45
+s_landed	The plane landed safely.	1.45
+s_met	I met a new friend at the park.	1.45
+s_mice	Three little mice ran under the bed.	1.45
+s_minus	Five minus two is three.	1.45
+s_mistake	It is okay to make a mistake.	1.45
+s_much	Thank you very much.	1.45
+s_music	We danced to the music.	1.45
+s_neck	The giraffe has a long neck.	1.45
+s_nest	The bird sat in its nest.	1.45
+s_nice	It is nice to share.	1.45
+s_nod	Nod your head if you agree.	1.45
+s_nose	The clown has a red nose.	1.45
+s_page	Turn to the next page.	1.45
+s_place	This is my favorite place to read.	1.45
+s_plants	We water the plants every day.	1.45
+s_plot	We grew carrots in our garden plot.	1.45
+s_price	What is the price of this toy?	1.45
+s_quiet	Please be quiet in the library.	1.45
+s_quite	The water is quite cold.	1.45
+s_raced	The kids raced to the swings.	1.45
+s_ready	Are you ready to go?	1.45
+s_robot	The robot can wave its arm.	1.45
+s_rub	Rub your hands to make them warm.	1.45
+s_saved	I saved my money in a piggy bank.	1.45
+s_see	I can see the moon.	1.45
+s_shade	Let's sit in the shade of the tree.	1.45
+s_she	She has a pet bunny.	1.45
+s_shelf	Put the book back on the shelf.	1.45
+s_shin	I hurt my shin when I fell.	1.45
+s_shine	The stars shine at night.	1.45
+s_shop	We went to the toy shop.	1.45
+s_skin	A banana has yellow skin.	1.45
+s_smell	I love the smell of cookies.	1.45
+s_smiled	The baby smiled at me.	1.45
+s_snack	I had an apple for a snack.	1.45
+s_so	I am so happy today.	1.45
+s_sock	I lost my sock.	1.45
+s_space	Astronauts fly into space.	1.45
+s_spend	I want to spend the day at the beach.	1.45
+s_stiff	My legs feel stiff after the long ride.	1.45
+s_that	Can I have that red ball?	1.45
+s_the	The sun is hot.	1.45
+s_their	The kids put on their coats.	1.45
+s_thanked	I thanked my aunt for the gift.	1.45
+s_thanking	We are thanking our teacher with a card.	1.45
+s_thick	This book is very thick.	1.45
+s_thin	The paper is very thin.	1.45
+s_thing	What is that thing in the box?	1.45
+s_thinking	I am thinking about lunch.	1.45
+s_trade	Do you want to trade stickers?	1.45
+s_traded	We traded snacks at lunch.	1.45
+s_trunks	The elephants lifted their trunks.	1.45
+s_use	You can use my crayons.	1.45
+s_vet	We took our dog to the vet.	1.45
+s_wag	My puppy likes to wag his tail.	1.45
+s_wash	Wash your hands before you eat.	1.45
+s_water	Fish swim in the water.	1.45
+s_what	What is your name?	1.45
+s_when	When is your birthday?	1.45
+s_where	Where is my hat?	1.45
+s_while	Wait here while I get my coat.	1.45
+s_wished	She wished on a star.	1.45
+s_who	Who wants to play tag?	1.45
+s_word	Can you spell this word?	1.45
+s_wrap	Let's wrap the present.	1.45
+s_write	I can write my name.	1.45
+s_yet	Is it time to go yet?	1.45
+s_you	I love you.	1.45
+s_young	The puppy is very young.	1.45
+s_zip	Zip up your coat, it is cold.	1.45
