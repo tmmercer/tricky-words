@@ -10,3 +10,11 @@ Three games, 10 words each:
 Missed words are saved to a "Practice my tricky ones" list on the device.
 
 It's a single static `index.html` with no build step.
+
+## Voice
+
+The words are pre-recorded MP3s in `audio/`, made with the open-source
+[Kokoro](https://github.com/hexgrad/kokoro) text-to-speech model (voice `af_bella`)
+run locally through [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
+`tools/generate-audio.sh` is the script that made them. If a clip can't load,
+the game falls back to the device's built-in voice.
