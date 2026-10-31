@@ -91,11 +91,11 @@ h1 span{color:var(--grape)}
   font-family:"Andika",sans-serif;font-weight:700;font-size:56px}
 .slot.filled{border:4px solid var(--grape);color:var(--grape);animation:pop .25s}
 .slot.next{border-color:var(--sun);background:#fffbea}
-.tiles{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;width:min(760px,100%);margin-bottom:22px}
-.tile{border:0;width:84px;height:94px;border-radius:20px;background:var(--grape);color:#fff;font-family:"Andika",sans-serif;font-weight:700;font-size:56px;
+.tiles{display:grid;grid-template-columns:repeat(9,1fr);gap:10px;width:min(780px,100%);margin-bottom:22px}
+.tile{border:0;width:100%;height:78px;border-radius:18px;background:var(--grape);color:#fff;font-family:"Andika",sans-serif;font-weight:700;font-size:46px;
   box-shadow:0 6px 0 #5a3ed1;cursor:pointer}
 .tile:active{transform:translateY(4px);box-shadow:0 2px 0 #5a3ed1}
-.tile.used{visibility:hidden}
+.tile.ok{background:var(--mint);box-shadow:0 6px 0 #2a9d6a;animation:pop .3s}
 .tile.wrong{background:var(--coral);box-shadow:0 6px 0 #c94b4b;animation:shake .4s}
 .peek{font-size:20px;opacity:.75;margin-bottom:10px;min-height:28px}
 
@@ -116,7 +116,7 @@ h1 span{color:var(--grape)}
   padding:14px 18px;border-radius:18px;font-size:18px;z-index:20;max-width:92vw;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 #soundTip button{border:0;background:transparent;color:#fff;font-size:18px;margin-left:8px;cursor:pointer}
 .note{font-size:16px;opacity:.6;margin-top:22px;text-align:center;max-width:620px}
-@media (max-width:520px){ .choices{grid-template-columns:1fr} .slot{width:56px;height:72px;font-size:42px} .tile{width:66px;height:76px;font-size:44px}}
+@media (max-width:520px){ .choices{grid-template-columns:1fr} .slot{width:56px;height:72px;font-size:42px} .tiles{grid-template-columns:repeat(7,1fr);gap:7px} .tile{height:60px;font-size:36px}}
 </style>
 </head>
 <body>
@@ -337,7 +337,7 @@ function pickWords(practice, filter){
   return list.slice(0,ROUND);
 }
 function start(mode, practice=false){
-  const filter = mode==="spell" ? (w=>w.length<=7) : null;
+  const filter = null;
   G={mode,practice,words:pickWords(practice,filter),i:0,stars:0,firstTry:true,missed:new Set(),retry:[]};
   show(mode); preload(["_nowfind","_nowspell","_thatsays","_find","_greatjob","_goodtry",...G.words]); render();
 }
@@ -432,9 +432,8 @@ function renderSpell(quiet){
   const slots=$("#slots"); slots.innerHTML="";
   [...w].forEach((_,i)=>{const d=document.createElement("div"); d.className="slot"+(i===0?" next":""); slots.appendChild(d)});
   const tiles=$("#tiles"); tiles.innerHTML="";
-  let letters=[...w]; let mixed=shuffle(letters);
-  if(letters.length>1){ let tries=0; while(mixed.join("")===w && tries++<10) mixed=shuffle(letters); }
-  mixed.forEach(ch=>{
+  // Show the whole alphabet so the letters don't give the spelling away.
+  [..."abcdefghijklmnopqrstuvwxyz"].forEach(ch=>{
     const t=document.createElement("button"); t.className="tile"; t.textContent=ch;
     t.onclick=()=>tapTile(t,ch); tiles.appendChild(t);
   });
@@ -445,7 +444,7 @@ function tapTile(t,ch){
   if(ch===S.w[S.pos]){
     const slots=$("#slots").children;
     slots[S.pos].textContent=ch; slots[S.pos].classList.add("filled"); slots[S.pos].classList.remove("next");
-    t.classList.add("used"); S.pos++;
+    t.classList.remove("ok"); void t.offsetWidth; t.classList.add("ok"); setTimeout(()=>t.classList.remove("ok"),400); S.pos++;
     if(S.pos<S.w.length){ slots[S.pos].classList.add("next") }
     else { const w=S.w; S=null; win(); speak([w,...upNext()]); setTimeout(next,1500); }
   }else{
