@@ -18,8 +18,12 @@ The words and sentences are pre-recorded MP3s in `audio/`, made with the open-so
 `af_heart`, US English pronunciation, slowed down for young readers), run locally through
 [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
 
+Kokoro adds a short "uh" sound at the very start of everything it says. To avoid it, every
+clip is spoken twice in one breath ("price, price.") and only the clean second copy is kept.
+Each clip was then checked with a speech-recognition model (Whisper) and re-cut where needed.
+
 - `tools/sentences.txt` – the example sentence for each word (used in Spell It)
 - `tools/audio-items.tsv` – every clip: key, text, speed
-- `tools/generate-audio.sh` – the script that recorded them
+- `tools/tts-twice.sh`, `tools/cut-second-copy.py`, `tools/fix-cut-with-asr.py` – the recording pipeline
 
 If a clip can't load, the game falls back to the device's built-in voice.
