@@ -112,6 +112,9 @@ h1 span{color:var(--grape)}
 @keyframes cheer{30%{opacity:1;transform:scale(1.1)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.2)}}
 .confetti{position:fixed;top:-20px;width:14px;height:20px;border-radius:4px;pointer-events:none;z-index:9;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+#soundTip{display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;
+  padding:14px 18px;border-radius:18px;font-size:18px;z-index:20;max-width:92vw;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#soundTip button{border:0;background:transparent;color:#fff;font-size:18px;margin-left:8px;cursor:pointer}
 .note{font-size:16px;opacity:.6;margin-top:22px;text-align:center;max-width:620px}
 @media (max-width:520px){ .choices{grid-template-columns:1fr} .slot{width:56px;height:72px;font-size:42px} .tile{width:66px;height:76px;font-size:44px}}
 </style>
@@ -178,6 +181,7 @@ h1 span{color:var(--grape)}
   </div>
 </section>
 
+<div id="soundTip" role="status">🔇 No sound? Turn the volume up, then tap the 🔊 button. <button id="soundTipX" aria-label="Close">✕</button></div>
 <div id="cheer"><div id="cheerText">Great job!</div></div>
 
 <script>
@@ -197,23 +201,44 @@ function markHard(w){hard[w]=(hard[w]||0)+1;saveHard()}
 function markGood(w){if(hard[w]){hard[w]--; if(hard[w]<=0) delete hard[w]; saveHard()}}
 
 // ---------- speech ----------
+const synth = window.speechSynthesis || null;
 let voice=null;
 function pickVoice(){
-  if(!("speechSynthesis" in window)) return;
-  const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
-  voice = vs.find(v=>/Samantha|Karen|Moira|Tessa|Google US/i.test(v.name)) || vs.find(v=>/en-US/i.test(v.lang)) || vs[0] || null;
+  if(!synth) return;
+  const vs=synth.getVoices().filter(v=>/^en[-_]?/i.test(v.lang));
+  if(!vs.length) return;
+  // Prefer voices built into the device: online voices (e.g. "Google US English") often fail silently.
+  const local=vs.filter(v=>v.localService!==false);
+  const pool=local.length?local:vs;
+  const us=pool.filter(v=>/en[-_]US/i.test(v.lang));
+  voice = pool.find(v=>/^Samantha/i.test(v.name)) || us.find(v=>v.default) || us[0] || pool[0] || null;
 }
-if("speechSynthesis" in window){pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;}
+if(synth){ pickVoice(); try{synth.addEventListener("voiceschanged",pickVoice)}catch(e){synth.onvoiceschanged=pickVoice} }
+let lastUtter=null; // keep a reference so Chrome doesn't garbage-collect it mid-speech
+let soundOk=false;
 function say(text,rate=0.75){
+  if(!synth) return false;
   try{
-    if(!("speechSynthesis" in window)) return false;
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    if(voice) u.voice=voice;
-    u.rate=rate; u.pitch=1.1; u.lang = voice? voice.lang : "en-US";
-    speechSynthesis.speak(u); return true;
-  }catch(e){return false}
+    if(!voice) pickVoice();
+    const go=()=>{
+      const u=new SpeechSynthesisUtterance(text);
+      if(voice) u.voice=voice;
+      u.lang = voice ? voice.lang : "en-US";
+      u.rate=rate; u.pitch=1.05; u.volume=1;
+      u.onstart=()=>{soundOk=true; hideSoundTip()};
+      u.onerror=e=>{ if(e.error!=="interrupted" && e.error!=="canceled") showSoundTip() };
+      lastUtter=u;
+      synth.speak(u);
+      if(synth.paused) synth.resume(); // Chrome sometimes gets stuck paused
+    };
+    // Chrome/Safari drop an utterance spoken immediately after cancel(), so wait a beat.
+    if(synth.speaking||synth.pending){ synth.cancel(); setTimeout(go,120) } else go();
+    if(!soundOk) setTimeout(()=>{ if(!soundOk && text.trim()) showSoundTip() },2500);
+    return true;
+  }catch(e){ showSoundTip(); return false }
 }
+function showSoundTip(){ const t=document.getElementById("soundTip"); if(t) t.style.display="block" }
+function hideSoundTip(){ const t=document.getElementById("soundTip"); if(t) t.style.display="none" }
 // Some words sound odd alone; say them in a tiny phrase too.
 const phrase = w => ({close:"close, close the door", the:"the", "a":"a", hi:"hi", so:"so", quite:"quite", quiet:"quiet", their:"their, their house"}[w] || w);
 
@@ -311,7 +336,7 @@ function renderListen(){
     };
     box.appendChild(b);
   });
-  setTimeout(()=>say(phrase(w)),350);
+  say(phrase(w));
 }
 $("#say1").onclick=()=>{ if(!say(phrase(current()))) $("#hint1").textContent="Sound isn’t working — ask a grown-up to read the word!"; };
 
@@ -344,7 +369,7 @@ function renderSpell(){
     const t=document.createElement("button"); t.className="tile"; t.textContent=ch;
     t.onclick=()=>tapTile(t,ch); tiles.appendChild(t);
   });
-  setTimeout(()=>say(phrase(w)),350);
+  say(phrase(w));
 }
 function tapTile(t,ch){
   if(t.classList.contains("used")||!S) return;
@@ -379,10 +404,11 @@ function finish(){
 $("#playAgain").onclick=()=>start(G.mode,G.practice);
 $("#goHome").onclick=()=>{updateHome(); show("home")};
 document.querySelectorAll(".home").forEach(b=>b.onclick=()=>{try{speechSynthesis.cancel()}catch(e){} updateHome(); show("home")});
-document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{ say(" ",1); start(b.dataset.mode) });
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>start(b.dataset.mode));
 $("#practiceBtn").onclick=()=>{
   const modes=["listen","flash","spell"]; start(modes[Math.random()*3|0],true);
 };
+$("#soundTipX").onclick=hideSoundTip;
 updateHome();
 </script>
 </body>
