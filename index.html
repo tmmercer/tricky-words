@@ -214,26 +214,30 @@ function pickVoice(){
   voice = pool.find(v=>/^Samantha/i.test(v.name)) || us.find(v=>v.default) || us[0] || pool[0] || null;
 }
 if(synth){ pickVoice(); try{synth.addEventListener("voiceschanged",pickVoice)}catch(e){synth.onvoiceschanged=pickVoice} }
-let lastUtter=null; // keep a reference so Chrome doesn't garbage-collect it mid-speech
 let soundOk=false;
-function say(text,rate=0.75){
+// Browsers (especially Safari) only allow speech that starts during a tap, so everything
+// that should be heard after a tap is queued right then, never from a timer.
+let utterQueue=[]; // keep references so Chrome doesn't garbage-collect them mid-speech
+function say(texts,rate=0.8){
   if(!synth) return false;
+  const items=(Array.isArray(texts)?texts:[texts]).filter(t=>t&&String(t).trim());
+  if(!items.length) return false;
   try{
     if(!voice) pickVoice();
-    const go=()=>{
+    if(synth.speaking||synth.pending) synth.cancel();
+    utterQueue=[];
+    for(const text of items){
       const u=new SpeechSynthesisUtterance(text);
       if(voice) u.voice=voice;
       u.lang = voice ? voice.lang : "en-US";
       u.rate=rate; u.pitch=1.05; u.volume=1;
       u.onstart=()=>{soundOk=true; hideSoundTip()};
       u.onerror=e=>{ if(e.error!=="interrupted" && e.error!=="canceled") showSoundTip() };
-      lastUtter=u;
+      utterQueue.push(u);
       synth.speak(u);
-      if(synth.paused) synth.resume(); // Chrome sometimes gets stuck paused
-    };
-    // Chrome/Safari drop an utterance spoken immediately after cancel(), so wait a beat.
-    if(synth.speaking||synth.pending){ synth.cancel(); setTimeout(go,120) } else go();
-    if(!soundOk) setTimeout(()=>{ if(!soundOk && text.trim()) showSoundTip() },2500);
+    }
+    if(synth.paused) synth.resume(); // Chrome sometimes gets stuck paused
+    if(!soundOk) setTimeout(()=>{ if(!soundOk) showSoundTip() },2500);
     return true;
   }catch(e){ showSoundTip(); return false }
 }
@@ -290,19 +294,28 @@ function setTop(){
 function current(){return G.words[G.i]}
 function next(){
   G.i++; G.firstTry=true;
-  if(G.i>=G.words.length) return finish();
-  render();
+  if(G.i>=G.words.length) return finish(true);
+  render(true);
 }
 function win(){
   if(G.firstTry){G.stars++; total++; store.set("tw_total",total); markGood(current())}
   setTop(); cheer(); confetti(24);
 }
 function miss(w){ if(G.firstTry){G.firstTry=false; G.missed.add(w); markHard(w)} }
-function render(){
+function render(quiet){
   setTop();
-  if(G.mode==="listen") renderListen();
+  if(G.mode==="listen") renderListen(quiet);
   if(G.mode==="flash") renderFlash();
-  if(G.mode==="spell") renderSpell();
+  if(G.mode==="spell") renderSpell(quiet);
+}
+function finishMsg(){ return G.stars>=G.words.length/2 ? "Great job! You did it!" : "Good try! Let's play again!" }
+// What to say after the current word is done (queued during the same tap).
+function upNext(){
+  const nx=G.words[G.i+1];
+  if(nx===undefined) return [finishMsg()];
+  if(G.mode==="listen") return ["Now find: "+phrase(nx)];
+  if(G.mode==="spell") return ["Now spell: "+phrase(nx)];
+  return [];
 }
 
 // ---------- Listen & Find ----------
@@ -314,7 +327,7 @@ function distractors(w){
   for(const x of close.concat(rest)){ if(!out.includes(x)) out.push(x); if(out.length===3) break; }
   return out;
 }
-function renderListen(){
+function renderListen(quiet){
   const w=current(); const box=$("#choices"); box.innerHTML="";
   $("#hint1").textContent="Tap the speaker, then find the word!";
   shuffle([w,...distractors(w)]).forEach(opt=>{
@@ -324,19 +337,18 @@ function renderListen(){
       if(opt===w){
         b.classList.add("right"); box.dataset.lock=1;
         box.querySelectorAll(".choice").forEach(c=>{if(c!==b)c.classList.add("dim")});
-        win(); say(phrase(w),0.85);
+        win(); say([phrase(w),...upNext()]);
         setTimeout(()=>{delete box.dataset.lock; next()},1400);
       }else{
         b.classList.add("wrong"); miss(w);
         $("#hint1").textContent="Oops! That says “"+opt+"”. Try again!";
-        say(opt,0.85);
+        say(["That says "+opt+".", "Find: "+phrase(w)]);
         setTimeout(()=>{b.classList.remove("wrong"); b.classList.add("dim")},450);
-        setTimeout(()=>say(phrase(w)),1300);
       }
     };
     box.appendChild(b);
   });
-  say(phrase(w));
+  if(!quiet) say(phrase(w));
 }
 $("#say1").onclick=()=>{ if(!say(phrase(current()))) $("#hint1").textContent="Sound isn’t working — ask a grown-up to read the word!"; };
 
@@ -346,17 +358,18 @@ function renderFlash(){
   f.classList.remove("in"); void f.offsetWidth; f.classList.add("in");
 }
 $("#say2").onclick=()=>say(phrase(current()));
-$("#gotIt").onclick=()=>{ win(); say(current(),0.85); setTimeout(next,900); };
+$("#gotIt").onclick=()=>{ win(); say([current(),...upNext()]); setTimeout(next,900); };
 $("#again").onclick=()=>{
-  const w=current(); miss(w); say(phrase(w));
+  const w=current(); miss(w);
   // put it back later in the round so she sees it again
   if(!G.retry.includes(w) && G.words.length<ROUND+5){ G.retry.push(w); G.words.push(w); }
+  say([phrase(w),...upNext()]);
   setTimeout(next,1300);
 };
 
 // ---------- Spell It ----------
 let S=null;
-function renderSpell(){
+function renderSpell(quiet){
   const w=current();
   S={w,pos:0};
   $("#peek").textContent="";
@@ -369,7 +382,7 @@ function renderSpell(){
     const t=document.createElement("button"); t.className="tile"; t.textContent=ch;
     t.onclick=()=>tapTile(t,ch); tiles.appendChild(t);
   });
-  say(phrase(w));
+  if(!quiet) say(phrase(w));
 }
 function tapTile(t,ch){
   if(t.classList.contains("used")||!S) return;
@@ -378,7 +391,7 @@ function tapTile(t,ch){
     slots[S.pos].textContent=ch; slots[S.pos].classList.add("filled"); slots[S.pos].classList.remove("next");
     t.classList.add("used"); S.pos++;
     if(S.pos<S.w.length){ slots[S.pos].classList.add("next") }
-    else { const w=S.w; S=null; win(); say(phrase(w),0.85); setTimeout(next,1500); }
+    else { const w=S.w; S=null; win(); say([phrase(w),...upNext()]); setTimeout(next,1500); }
   }else{
     miss(S.w); t.classList.add("wrong"); setTimeout(()=>t.classList.remove("wrong"),450);
   }
@@ -390,7 +403,7 @@ $("#peekBtn").onclick=()=>{
 };
 
 // ---------- Finish ----------
-function finish(){
+function finish(quiet){
   const tot=G.words.length, s=G.stars;
   $("#doneTitle").textContent = s>=tot-1 ? "Superstar! 🌟" : s>=tot/2 ? "Great work!" : "Nice try!";
   $("#doneText").innerHTML = "You earned <b>"+s+"</b> ⭐ this game!<br>Treasure chest: <b>"+total+"</b> stars";
@@ -399,7 +412,7 @@ function finish(){
     h.style.display="block";
     h.innerHTML="Let’s practice these again:<br>"+[...G.missed].map(w=>'<span class="word">'+w+'</span>').join("");
   } else h.style.display="none";
-  show("done"); confetti(80); say(s>=tot/2?"Great job! You did it!":"Good try! Let's play again!",0.95);
+  show("done"); confetti(80); if(!quiet) say(finishMsg());
 }
 $("#playAgain").onclick=()=>start(G.mode,G.practice);
 $("#goHome").onclick=()=>{updateHome(); show("home")};
