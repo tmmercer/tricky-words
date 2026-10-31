@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Tricky Word Treasure Hunt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#bfe6ff; --sky2:#e8f6ff; --sun:#ffc93c; --coral:#ff6b6b; --mint:#3ecf8e;
+  --grape:#7c5cff; --ink:#23305a; --card:#ffffff; --shadow:0 6px 0 rgba(35,48,90,.18);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Fredoka",system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,var(--sky) 0%,var(--sky2) 70%,#fff4d6 100%);
+  min-height:100vh;overflow-x:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;
+}
+.screen{display:none;min-height:100vh;padding:24px 20px 40px;flex-direction:column;align-items:center}
+.screen.on{display:flex}
+h1{font-size:clamp(34px,6vw,58px);margin:10px 0 4px;text-align:center;line-height:1.05}
+h1 span{color:var(--grape)}
+.sub{font-size:clamp(18px,2.6vw,24px);margin:0 0 24px;opacity:.8;text-align:center}
+.word{font-family:"Andika",sans-serif;font-weight:700}
+
+/* Home */
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;width:min(900px,100%)}
+.mode{
+  border:0;border-radius:28px;padding:26px 20px;font:inherit;color:#fff;cursor:pointer;
+  box-shadow:var(--shadow);text-align:center;transition:transform .12s;
+}
+.mode:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(35,48,90,.18)}
+.mode .ico{font-size:64px;display:block;line-height:1.1}
+.mode b{display:block;font-size:28px;margin:8px 0 4px}
+.mode small{font-size:18px;opacity:.95}
+.m1{background:var(--grape)} .m2{background:var(--coral)} .m3{background:var(--mint)}
+.treasure{margin-top:28px;background:#fff;border-radius:24px;padding:16px 26px;box-shadow:var(--shadow);
+  font-size:22px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.pill{border:0;font:inherit;font-size:18px;padding:10px 18px;border-radius:999px;background:var(--sun);color:var(--ink);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.pill.ghost{background:#eef2ff}
+.pill:disabled{opacity:.4}
+
+/* Top bar */
+.top{width:min(900px,100%);display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.home{border:0;background:#fff;border-radius:18px;font-size:30px;width:62px;height:62px;box-shadow:var(--shadow);cursor:pointer}
+.progress{flex:1;height:26px;background:#fff;border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.1)}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--sun),#ff9f43);border-radius:999px;transition:width .4s}
+.stars{font-size:26px;background:#fff;border-radius:18px;padding:10px 16px;box-shadow:var(--shadow);white-space:nowrap}
+
+/* Listen & Find */
+.speaker{
+  border:0;width:150px;height:150px;border-radius:50%;background:var(--sun);font-size:72px;cursor:pointer;
+  box-shadow:0 8px 0 #d99a12;margin:6px 0 10px;animation:bob 2.4s ease-in-out infinite;
+}
+.speaker:active{transform:translateY(6px);box-shadow:0 2px 0 #d99a12}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.hint{font-size:22px;margin:0 0 20px;text-align:center;min-height:30px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:18px;width:min(760px,100%)}
+.choice{
+  border:0;background:var(--card);border-radius:26px;padding:28px 10px;font-family:"Andika",sans-serif;font-weight:700;
+  font-size:clamp(38px,6vw,58px);color:var(--ink);box-shadow:var(--shadow);cursor:pointer;transition:transform .12s, background .2s;
+}
+.choice:active{transform:translateY(4px)}
+.choice.right{background:var(--mint);color:#fff;animation:pop .4s}
+.choice.wrong{background:#ffd6d6;color:#b33;animation:shake .4s}
+.choice.dim{opacity:.35}
+@keyframes pop{50%{transform:scale(1.1)}}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+
+/* Flash */
+.flash{
+  background:#fff;border-radius:36px;box-shadow:var(--shadow);width:min(760px,100%);min-height:280px;
+  display:flex;align-items:center;justify-content:center;font-family:"Andika",sans-serif;font-weight:700;
+  font-size:clamp(70px,13vw,140px);margin-bottom:22px;text-align:center;padding:20px;
+}
+.flash.in{animation:flip .45s}
+@keyframes flip{from{transform:rotateY(90deg)}to{transform:none}}
+.row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;width:min(760px,100%)}
+.big{
+  border:0;font:inherit;font-size:26px;padding:20px 28px;border-radius:24px;color:#fff;cursor:pointer;box-shadow:var(--shadow);flex:1;min-width:200px;
+}
+.big:active{transform:translateY(4px)}
+.b-yel{background:var(--sun);color:var(--ink)} .b-grn{background:var(--mint)} .b-red{background:var(--coral)} .b-pur{background:var(--grape)}
+
+/* Spell */
+.slots{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:6px 0 26px;min-height:96px}
+.slot{width:74px;height:90px;border-radius:18px;background:#fff;border:4px dashed #b8c4e6;display:flex;align-items:center;justify-content:center;
+  font-family:"Andika",sans-serif;font-weight:700;font-size:56px}
+.slot.filled{border:4px solid var(--grape);color:var(--grape);animation:pop .25s}
+.slot.next{border-color:var(--sun);background:#fffbea}
+.tiles{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;width:min(760px,100%);margin-bottom:22px}
+.tile{border:0;width:84px;height:94px;border-radius:20px;background:var(--grape);color:#fff;font-family:"Andika",sans-serif;font-weight:700;font-size:56px;
+  box-shadow:0 6px 0 #5a3ed1;cursor:pointer}
+.tile:active{transform:translateY(4px);box-shadow:0 2px 0 #5a3ed1}
+.tile.used{visibility:hidden}
+.tile.wrong{background:var(--coral);box-shadow:0 6px 0 #c94b4b;animation:shake .4s}
+.peek{font-size:20px;opacity:.75;margin-bottom:10px;min-height:28px}
+
+/* Done */
+.trophy{font-size:130px;animation:bob 2s ease-in-out infinite;margin-top:20px}
+.result{font-size:30px;text-align:center;margin:8px 0 6px}
+.practice{background:#fff;border-radius:24px;padding:16px 22px;box-shadow:var(--shadow);margin:14px 0 24px;max-width:760px;text-align:center;font-size:20px}
+.practice .word{display:inline-block;background:#fff1c2;border-radius:12px;padding:4px 12px;margin:5px;font-size:28px}
+
+/* Celebration */
+#cheer{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:10}
+#cheer div{font-size:clamp(46px,9vw,90px);color:#fff;-webkit-text-stroke:3px var(--ink);font-weight:700;opacity:0;transform:scale(.5)}
+#cheer.go div{animation:cheer 1s forwards}
+@keyframes cheer{30%{opacity:1;transform:scale(1.1)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.2)}}
+.confetti{position:fixed;top:-20px;width:14px;height:20px;border-radius:4px;pointer-events:none;z-index:9;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.note{font-size:16px;opacity:.6;margin-top:22px;text-align:center;max-width:620px}
+@media (max-width:520px){ .choices{grid-template-columns:1fr} .slot{width:56px;height:72px;font-size:42px} .tile{width:66px;height:76px;font-size:44px}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<section class="screen on" id="home">
+  <h1>Tricky Word <span>Treasure Hunt</span></h1>
+  <p class="sub">Pick a game and win gold stars! ⭐</p>
+  <div class="modes">
+    <button class="mode m1" data-mode="listen"><span class="ico">👂</span><b>Listen &amp; Find</b><small>Hear a word, tap it!</small></button>
+    <button class="mode m2" data-mode="flash"><span class="ico">📖</span><b>Read It!</b><small>Read the word out loud</small></button>
+    <button class="mode m3" data-mode="spell"><span class="ico">🔤</span><b>Spell It</b><small>Build the word with letters</small></button>
+  </div>
+  <div class="treasure">
+    <span>🏆 Treasure: <b id="totalStars">0</b> stars</span>
+    <button class="pill" id="practiceBtn" disabled>🎯 Practice my tricky ones (<span id="hardCount">0</span>)</button>
+  </div>
+  <p class="note">Grown-ups: turn the iPad volume up and make sure the side switch isn’t on silent so she can hear the words. Each game is 10 words.</p>
+</section>
+
+<!-- LISTEN -->
+<section class="screen" id="listen">
+  <div class="top"><button class="home" aria-label="Home">🏠</button><div class="progress"><div class="bar"></div></div><div class="stars">⭐ <span class="sc">0</span></div></div>
+  <button class="speaker" id="say1" aria-label="Hear the word">🔊</button>
+  <p class="hint" id="hint1">Tap the speaker, then find the word!</p>
+  <div class="choices" id="choices"></div>
+</section>
+
+<!-- FLASH -->
+<section class="screen" id="flash">
+  <div class="top"><button class="home" aria-label="Home">🏠</button><div class="progress"><div class="bar"></div></div><div class="stars">⭐ <span class="sc">0</span></div></div>
+  <p class="hint">Read this word out loud!</p>
+  <div class="flash word" id="flashWord"></div>
+  <div class="row">
+    <button class="big b-yel" id="say2">🔊 Check it</button>
+  </div>
+  <div class="row" style="margin-top:16px">
+    <button class="big b-grn" id="gotIt">✅ I read it!</button>
+    <button class="big b-red" id="again">🔁 Practice more</button>
+  </div>
+</section>
+
+<!-- SPELL -->
+<section class="screen" id="spell">
+  <div class="top"><button class="home" aria-label="Home">🏠</button><div class="progress"><div class="bar"></div></div><div class="stars">⭐ <span class="sc">0</span></div></div>
+  <button class="speaker" id="say3" aria-label="Hear the word" style="width:120px;height:120px;font-size:58px">🔊</button>
+  <div class="peek" id="peek"></div>
+  <div class="slots" id="slots"></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="row"><button class="big b-pur" id="peekBtn" style="flex:0 1 260px">👀 Peek at the word</button></div>
+</section>
+
+<!-- DONE -->
+<section class="screen" id="done">
+  <div class="trophy">🏆</div>
+  <h1 id="doneTitle">You did it!</h1>
+  <p class="result" id="doneText"></p>
+  <div class="practice" id="doneHard" style="display:none"></div>
+  <div class="row">
+    <button class="big b-grn" id="playAgain">▶️ Play again</button>
+    <button class="big b-pur" id="goHome">🏠 Pick a game</button>
+  </div>
+</section>
+
+<div id="cheer"><div id="cheerText">Great job!</div></div>
+
+<script>
+const WORDS = ["advice","age","ahead","alone","and","badge","belt","beside","bridge","bring","change","checked","chin","cliff","clock","close","closed","cub","cube","dodge","does","drink","dug","edge","everyone","excuse","excused","face","flake","flu","fox","fudge","grade","grass","grin","he","heard","help","hi","hope","hoped","huge","include","invited","jam","kit","landed","met","mice","minus","mistake","much","music","neck","nest","nice","nod","nose","page","place","plants","plot","price","quiet","quite","raced","ready","robot","rub","saved","see","shade","she","shelf","shin","shine","shop","skin","smell","smiled","snack","so","sock","space","spend","stiff","that","the","their","thanked","thanking","thick","thin","thing","thinking","trade","traded","trunks","use","vet","wag","wash","water","what","when","where","while","wished","who","word","wrap","write","yet","you","young","zip"];
+const ROUND = 10;
+const CHEERS = ["Great job!","Super!","You got it!","Awesome!","Wow!","Yes!","Brilliant!","Star reader!"];
+
+// ---------- storage (optional) ----------
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let total = store.get("tw_total",0);
+let hard = store.get("tw_hard",{}); // word -> misses
+function saveHard(){store.set("tw_hard",hard)}
+function markHard(w){hard[w]=(hard[w]||0)+1;saveHard()}
+function markGood(w){if(hard[w]){hard[w]--; if(hard[w]<=0) delete hard[w]; saveHard()}}
+
+// ---------- speech ----------
+let voice=null;
+function pickVoice(){
+  if(!("speechSynthesis" in window)) return;
+  const vs=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+  voice = vs.find(v=>/Samantha|Karen|Moira|Tessa|Google US/i.test(v.name)) || vs.find(v=>/en-US/i.test(v.lang)) || vs[0] || null;
+}
+if("speechSynthesis" in window){pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;}
+function say(text,rate=0.75){
+  try{
+    if(!("speechSynthesis" in window)) return false;
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    if(voice) u.voice=voice;
+    u.rate=rate; u.pitch=1.1; u.lang = voice? voice.lang : "en-US";
+    speechSynthesis.speak(u); return true;
+  }catch(e){return false}
+}
+// Some words sound odd alone; say them in a tiny phrase too.
+const phrase = w => ({close:"close, close the door", the:"the", "a":"a", hi:"hi", so:"so", quite:"quite", quiet:"quiet", their:"their, their house"}[w] || w);
+
+// ---------- helpers ----------
+const $ = s=>document.querySelector(s);
+const shuffle = a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id)); window.scrollTo(0,0)}
+function cheer(){
+  const t=$("#cheerText"); t.textContent=CHEERS[Math.random()*CHEERS.length|0];
+  const c=$("#cheer"); c.classList.remove("go"); void c.offsetWidth; c.classList.add("go");
+}
+function confetti(n=40){
+  const colors=["#ffc93c","#ff6b6b","#3ecf8e","#7c5cff","#4dabf7","#ff9f43"];
+  for(let i=0;i<n;i++){
+    const d=document.createElement("div"); d.className="confetti";
+    d.style.left=Math.random()*100+"vw"; d.style.background=colors[i%colors.length];
+    d.style.animationDuration=(1.6+Math.random()*1.6)+"s"; d.style.animationDelay=(Math.random()*.4)+"s";
+    document.body.appendChild(d); setTimeout(()=>d.remove(),4000);
+  }
+}
+function updateHome(){
+  $("#totalStars").textContent=total;
+  const n=Object.keys(hard).length;
+  $("#hardCount").textContent=n; $("#practiceBtn").disabled = n===0;
+}
+
+// ---------- game state ----------
+let G=null;
+function pickWords(practice, filter){
+  let pool = practice ? Object.keys(hard) : WORDS;
+  if(filter) pool = pool.filter(filter);
+  if(!pool.length) pool = WORDS.filter(filter||(()=>true));
+  let list = shuffle(pool);
+  // practice rounds: pad with fresh words if there are few hard words
+  if(list.length<ROUND && practice){ list = list.concat(shuffle(WORDS.filter(w=>!list.includes(w)&&(!filter||filter(w)))).slice(0,ROUND-list.length)) }
+  return list.slice(0,ROUND);
+}
+function start(mode, practice=false){
+  const filter = mode==="spell" ? (w=>w.length<=7) : null;
+  G={mode,practice,words:pickWords(practice,filter),i:0,stars:0,firstTry:true,missed:new Set(),retry:[]};
+  show(mode); render();
+}
+function sec(){return document.getElementById(G.mode)}
+function setTop(){
+  const done=G.i, tot=G.words.length;
+  sec().querySelector(".bar").style.width=(done/tot*100)+"%";
+  sec().querySelector(".sc").textContent=G.stars;
+}
+function current(){return G.words[G.i]}
+function next(){
+  G.i++; G.firstTry=true;
+  if(G.i>=G.words.length) return finish();
+  render();
+}
+function win(){
+  if(G.firstTry){G.stars++; total++; store.set("tw_total",total); markGood(current())}
+  setTop(); cheer(); confetti(24);
+}
+function miss(w){ if(G.firstTry){G.firstTry=false; G.missed.add(w); markHard(w)} }
+function render(){
+  setTop();
+  if(G.mode==="listen") renderListen();
+  if(G.mode==="flash") renderFlash();
+  if(G.mode==="spell") renderSpell();
+}
+
+// ---------- Listen & Find ----------
+function distractors(w){
+  const others=WORDS.filter(x=>x!==w);
+  const close=shuffle(others.filter(x=>x[0]===w[0] || Math.abs(x.length-w.length)<=1 && x.slice(-2)===w.slice(-2)));
+  const rest=shuffle(others);
+  const out=[];
+  for(const x of close.concat(rest)){ if(!out.includes(x)) out.push(x); if(out.length===3) break; }
+  return out;
+}
+function renderListen(){
+  const w=current(); const box=$("#choices"); box.innerHTML="";
+  $("#hint1").textContent="Tap the speaker, then find the word!";
+  shuffle([w,...distractors(w)]).forEach(opt=>{
+    const b=document.createElement("button"); b.className="choice"; b.textContent=opt;
+    b.onclick=()=>{
+      if(b.classList.contains("dim")||box.dataset.lock) return;
+      if(opt===w){
+        b.classList.add("right"); box.dataset.lock=1;
+        box.querySelectorAll(".choice").forEach(c=>{if(c!==b)c.classList.add("dim")});
+        win(); say(phrase(w),0.85);
+        setTimeout(()=>{delete box.dataset.lock; next()},1400);
+      }else{
+        b.classList.add("wrong"); miss(w);
+        $("#hint1").textContent="Oops! That says “"+opt+"”. Try again!";
+        say(opt,0.85);
+        setTimeout(()=>{b.classList.remove("wrong"); b.classList.add("dim")},450);
+        setTimeout(()=>say(phrase(w)),1300);
+      }
+    };
+    box.appendChild(b);
+  });
+  setTimeout(()=>say(phrase(w)),350);
+}
+$("#say1").onclick=()=>{ if(!say(phrase(current()))) $("#hint1").textContent="Sound isn’t working — ask a grown-up to read the word!"; };
+
+// ---------- Read It! ----------
+function renderFlash(){
+  const f=$("#flashWord"); f.textContent=current();
+  f.classList.remove("in"); void f.offsetWidth; f.classList.add("in");
+}
+$("#say2").onclick=()=>say(phrase(current()));
+$("#gotIt").onclick=()=>{ win(); say(current(),0.85); setTimeout(next,900); };
+$("#again").onclick=()=>{
+  const w=current(); miss(w); say(phrase(w));
+  // put it back later in the round so she sees it again
+  if(!G.retry.includes(w) && G.words.length<ROUND+5){ G.retry.push(w); G.words.push(w); }
+  setTimeout(next,1300);
+};
+
+// ---------- Spell It ----------
+let S=null;
+function renderSpell(){
+  const w=current();
+  S={w,pos:0};
+  $("#peek").textContent="";
+  const slots=$("#slots"); slots.innerHTML="";
+  [...w].forEach((_,i)=>{const d=document.createElement("div"); d.className="slot"+(i===0?" next":""); slots.appendChild(d)});
+  const tiles=$("#tiles"); tiles.innerHTML="";
+  let letters=[...w]; let mixed=shuffle(letters);
+  if(letters.length>1){ let tries=0; while(mixed.join("")===w && tries++<10) mixed=shuffle(letters); }
+  mixed.forEach(ch=>{
+    const t=document.createElement("button"); t.className="tile"; t.textContent=ch;
+    t.onclick=()=>tapTile(t,ch); tiles.appendChild(t);
+  });
+  setTimeout(()=>say(phrase(w)),350);
+}
+function tapTile(t,ch){
+  if(t.classList.contains("used")||!S) return;
+  if(ch===S.w[S.pos]){
+    const slots=$("#slots").children;
+    slots[S.pos].textContent=ch; slots[S.pos].classList.add("filled"); slots[S.pos].classList.remove("next");
+    t.classList.add("used"); S.pos++;
+    if(S.pos<S.w.length){ slots[S.pos].classList.add("next") }
+    else { const w=S.w; S=null; win(); say(phrase(w),0.85); setTimeout(next,1500); }
+  }else{
+    miss(S.w); t.classList.add("wrong"); setTimeout(()=>t.classList.remove("wrong"),450);
+  }
+}
+$("#say3").onclick=()=>say(phrase(current()));
+$("#peekBtn").onclick=()=>{
+  const w=current(); $("#peek").innerHTML='<span class="word" style="font-size:34px">'+w+'</span>';
+  setTimeout(()=>{ if(current()===w) $("#peek").textContent="" },1800);
+};
+
+// ---------- Finish ----------
+function finish(){
+  const tot=G.words.length, s=G.stars;
+  $("#doneTitle").textContent = s>=tot-1 ? "Superstar! 🌟" : s>=tot/2 ? "Great work!" : "Nice try!";
+  $("#doneText").innerHTML = "You earned <b>"+s+"</b> ⭐ this game!<br>Treasure chest: <b>"+total+"</b> stars";
+  const h=$("#doneHard");
+  if(G.missed.size){
+    h.style.display="block";
+    h.innerHTML="Let’s practice these again:<br>"+[...G.missed].map(w=>'<span class="word">'+w+'</span>').join("");
+  } else h.style.display="none";
+  show("done"); confetti(80); say(s>=tot/2?"Great job! You did it!":"Good try! Let's play again!",0.95);
+}
+$("#playAgain").onclick=()=>start(G.mode,G.practice);
+$("#goHome").onclick=()=>{updateHome(); show("home")};
+document.querySelectorAll(".home").forEach(b=>b.onclick=()=>{try{speechSynthesis.cancel()}catch(e){} updateHome(); show("home")});
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{ say(" ",1); start(b.dataset.mode) });
+$("#practiceBtn").onclick=()=>{
+  const modes=["listen","flash","spell"]; start(modes[Math.random()*3|0],true);
+};
+updateHome();
+</script>
+</body>
+</html>
